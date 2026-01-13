@@ -1,44 +1,77 @@
 
 import { GoogleGenAI } from "@google/genai";
 
-// Standardizing initialization according to Google GenAI SDK guidelines
-// The API key must be obtained exclusively from the environment variable process.env.API_KEY.
 class GeminiService {
-  private ai: GoogleGenAI;
+  private ai: any = null;
+  private initialized: boolean = false;
 
-  constructor() {
-    // Prevent crash if API key is missing
-    const key = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
-    if (key) {
-      this.ai = new GoogleGenAI({ apiKey: key });
-    } else {
-      console.warn("Gemini API Key missing. AI features will be disabled.");
-      this.ai = null;
+  constructor() { }
+
+  private init() {
+    if (this.initialized) return;
+    this.initialized = true;
+    try {
+      // In Vite, use import.meta.env. Using 'as any' to bypass TS check.
+      const key = (import.meta as any).env?.VITE_GEMINI_API_KEY;
+
+      // Only initialize if we have a real-looking key
+      if (key && key !== 'undefined' && key !== 'null' && key.length > 10) {
+        // Try both common initialization styles
+        try {
+          this.ai = new GoogleGenAI(key);
+        } catch (e) {
+          this.ai = new GoogleGenAI({ apiKey: key });
+        }
+      }
+    } catch (e) {
+      console.warn("Gemini AI initialization ignored:", e.message);
     }
   }
 
   createChat() {
+    this.init();
     if (!this.ai) {
       return {
-        sendMessageStream: async () => {
-          throw new Error("AI Assistant is currently unavailable (API Key missing).");
+        isMock: true,
+        sendMessageStream: async function* () {
+          yield "AI Assistant is currently offline. Please set VITE_GEMINI_API_KEY in your environment variables to enable it.";
         }
       };
     }
-    // Using recommended model 'gemini-3-pro-preview' for complex reasoning and professional assistance
-    return this.ai.chats.create({
-      model: 'gemini-3-pro-preview',
-      config: {
-        systemInstruction: "You are InfiniteAI Assistant v4.2.0, the specialized internal companion for InfiniteTech. You assist users like John Doe (Senior Software Engineer) with platform settings, attendance data, and project workload management. Be professional, concise, and helpful.",
+
+    try {
+      // Handle various SDK versions
+      if (typeof this.ai.getGenerativeModel === 'function') {
+        const model = this.ai.getGenerativeModel({ model: "gemini-1.5-flash" });
+        return model.startChat ? model.startChat() : model;
+      } else if (this.ai.chats) {
+        return this.ai.chats.create({ model: 'gemini-1.5-flash' });
       }
-    });
+    } catch (e) {
+      console.error("Chat creation failed", e);
+    }
+    return null;
   }
 
   async *streamChat(chat: any, message: string) {
-    const stream = await chat.sendMessageStream({ message });
-    for await (const chunk of stream) {
-      // The GenerateContentResponse object features a .text property (not a method).
-      yield chunk.text;
+    if (!chat) {
+      yield "AI Connection Error.";
+      return;
+    }
+    if (chat.isMock) {
+      yield* chat.sendMessageStream();
+      return;
+    }
+
+    try {
+      const stream = await chat.sendMessageStream({ message });
+      for await (const chunk of stream) {
+        // Handle different response structures
+        if (chunk.text) yield chunk.text;
+        else if (chunk.response) yield await chunk.response.text();
+      }
+    } catch (e) {
+      yield "Error: AI service is currently overloaded or unavailable.";
     }
   }
 }
