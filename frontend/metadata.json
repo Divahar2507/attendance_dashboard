@@ -1,0 +1,9 @@
+
+{
+  "name": "InfiniteTech Dashboard",
+  "description": "Enterprise-grade smart attendance and project management dashboard.",
+  "requestFramePermissions": [
+    "geolocation",
+    "camera"
+  ]
+}
