@@ -16,9 +16,14 @@ from api.models import User; \
 username=os.environ.get('DJANGO_SUPERUSER_USERNAME'); \
 email=os.environ.get('DJANGO_SUPERUSER_EMAIL', ''); \
 password=os.environ.get('DJANGO_SUPERUSER_PASSWORD'); \
-not User.objects.filter(username=username).exists() and \
-User.objects.create_superuser(username, email, password)"
+user = User.objects.filter(username=username).first(); \
+if not user: \
+    User.objects.create_superuser(username, email, password, role='ADMIN'); \
+elif user.role != 'ADMIN': \
+    user.role = 'ADMIN'; \
+    user.save()"
 fi
+
 
 
 
