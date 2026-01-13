@@ -98,8 +98,12 @@ DATABASES = {
 
 # Update database config for production (PostgreSQL via DATABASE_URL)
 import dj_database_url
-db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+DATABASES['default'] = dj_database_url.config(
+    conn_max_age=600,
+    conn_health_checks=True,
+    ssl_require=True
+)
+
 
 
 CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', "http://localhost:3000").split(',')
