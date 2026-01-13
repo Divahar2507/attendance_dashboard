@@ -7,10 +7,24 @@ class GeminiService {
   private ai: GoogleGenAI;
 
   constructor() {
-    this.ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
+    // Prevent crash if API key is missing
+    const key = (import.meta as any).env?.VITE_GEMINI_API_KEY || '';
+    if (key) {
+      this.ai = new GoogleGenAI({ apiKey: key });
+    } else {
+      console.warn("Gemini API Key missing. AI features will be disabled.");
+      this.ai = null;
+    }
   }
 
   createChat() {
+    if (!this.ai) {
+      return {
+        sendMessageStream: async () => {
+          throw new Error("AI Assistant is currently unavailable (API Key missing).");
+        }
+      };
+    }
     // Using recommended model 'gemini-3-pro-preview' for complex reasoning and professional assistance
     return this.ai.chats.create({
       model: 'gemini-3-pro-preview',
