@@ -105,9 +105,9 @@ if database_url:
         conn_max_age=600,
         conn_health_checks=True,
     )
-    # Force SSL for Supabase
+    # Use 'prefer' for local Docker and 'require' for production (Supabase/Render)
     DATABASES['default'].setdefault('OPTIONS', {})
-    DATABASES['default']['OPTIONS']['sslmode'] = 'require'
+    DATABASES['default']['OPTIONS']['sslmode'] = os.environ.get('DB_SSLMODE', 'prefer')
 
 
 

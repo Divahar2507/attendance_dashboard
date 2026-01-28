@@ -78,3 +78,34 @@ class WorkUpdate(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.project_name}"
+
+class Ticket(models.Model):
+    STATUS_CHOICES = [
+        ('Open', 'Open'),
+        ('In_Progress', 'In Progress'),
+        ('Review', 'Review'),
+        ('Completed', 'Completed'),
+    ]
+    
+    title = models.CharField(max_length=200)
+    description = models.TextField()
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='Open')
+    assignee = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='assigned_tickets')
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='created_tickets')
+    month = models.CharField(max_length=20)
+    year = models.IntegerField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.title} ({self.status})"
+
+class TicketUpdate(models.Model):
+    ticket = models.ForeignKey(Ticket, on_delete=models.CASCADE, related_name='updates')
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    update_text = models.TextField()
+    screenshot = models.ImageField(upload_to='ticket_updates/', null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f"Update on {self.ticket.title} by {self.user.username}"

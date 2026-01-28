@@ -14,9 +14,17 @@ class AuthView(APIView):
         user = authenticate(username=username, password=password)
         if user:
             token, created = Token.objects.get_or_create(user=user)
+            try:
+                user_data = UserSerializer(user).data
+            except Exception as e:
+                print(f"SERIALIZER ERROR: {e}")
+                import traceback
+                traceback.print_exc()
+                return Response({'error': f"Serializer Error: {str(e)}"}, status=500)
+            
             return Response({
                 'token': token.key,
-                'user': UserSerializer(user).data
+                'user': user_data
             })
         return Response({'error': 'Invalid Credentials'}, status=status.HTTP_400_BAD_REQUEST)
 
@@ -180,5 +188,44 @@ class AttendanceView(APIView):
              return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         history = Attendance.objects.filter(user_id=user_id).order_by('-date')
-        serializer = AttendanceSerializer(history, many=True)
         return Response(serializer.data)
+
+from .models import Ticket, TicketUpdate
+from .serializers import TicketSerializer, TicketUpdateSerializer
+
+class TicketViewSet(viewsets.ModelViewSet):
+    serializer_class = TicketSerializer
+    permissions_classes = [permissions.IsAuthenticated]
+    
+    def get_queryset(self):
+        # Admin sees all, Employee sees pool (unassigned) or their own?
+        # Frontend logic seems to separate "Mine" vs "Pool" in UI, but asks for all tickets or specific endpoints.
+        # UserDashboard: '/tickets' -> Pool? No, fetchTickets fetches all.
+        # But 'poolTickets' filter: !t.userId.
+        # So '/tickets' should probably return ALL tickets or Open tickets.
+        return Ticket.objects.all().order_by('-created_at')
+
+    def perform_create(self, serializer):
+        serializer.save(created_by=self.request.user)
+
+class MyTicketsView(APIView):
+    permission_classes = [permissions.IsAuthenticated]
+
+    def get(self, request):
+        tickets = Ticket.objects.filter(assignee=request.user).order_by('-created_at')
+        serializer = TicketSerializer(tickets, many=True)
+        return Response(serializer.data)
+
+class TicketUpdateViewSet(viewsets.ModelViewSet):
+    queryset = TicketUpdate.objects.all()
+    serializer_class = TicketUpdateSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
+
+    def create(self, request, *args, **kwargs):
+        # Flatten data for screenshot upload if needed, or DRF handles it
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save(user=self.request.user)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

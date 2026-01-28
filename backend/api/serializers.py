@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import User, EmployeeProfile, Attendance, EmployeeDocument, WorkUpdate
+from .models import User, EmployeeProfile, Attendance, EmployeeDocument, WorkUpdate, Ticket, TicketUpdate
 
 class AttendanceSerializer(serializers.ModelSerializer):
     class Meta:
@@ -56,3 +56,25 @@ class CreateEmployeeSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     location = serializers.CharField(required=False, allow_blank=True)
     date_of_birth = serializers.DateField(required=False, allow_null=True)
+
+class TicketUpdateSerializer(serializers.ModelSerializer):
+    user_name = serializers.CharField(source='user.username', read_only=True)
+    
+    class Meta:
+        model = TicketUpdate
+        fields = ['id', 'ticket', 'user', 'user_name', 'update_text', 'screenshot', 'created_at']
+        read_only_fields = ['user', 'created_at']
+
+class TicketSerializer(serializers.ModelSerializer):
+    assignee_name = serializers.SerializerMethodField()
+    updates = TicketUpdateSerializer(many=True, read_only=True)
+
+    class Meta:
+        model = Ticket
+        fields = ['id', 'title', 'description', 'status', 'assignee', 'assignee_name', 'created_by', 'month', 'year', 'created_at', 'updated_at', 'updates']
+        read_only_fields = ['created_by', 'created_at', 'updated_at']
+
+    def get_assignee_name(self, obj):
+        if obj.assignee:
+            return f"{obj.assignee.first_name} {obj.assignee.last_name}"
+        return None

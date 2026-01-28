@@ -15,9 +15,13 @@ import {
     FileTextIcon,
     MoreHorizontalIcon,
     FolderIcon,
-    BrainIcon
+    BrainIcon,
+    LayersIcon
 } from './Icons';
 import { api } from '../services/api';
+import Reports from './Reports';
+import ProjectReport from './ProjectReport';
+import TicketConsole from './tickets/AdminDashboard.tsx';
 
 const AdminDashboard = ({ user, onLogout }) => {
     const [employees, setEmployees] = useState([]);
@@ -53,7 +57,7 @@ const AdminDashboard = ({ user, onLogout }) => {
     const [allWorkUpdates, setAllWorkUpdates] = useState([]);
 
     useEffect(() => {
-        if (activeView === 'reports') {
+        if (activeView === 'reports' || activeView === 'project-reports') {
             const fetchReports = async () => {
                 try {
                     const updates = await api.getWorkUpdates();
@@ -101,7 +105,8 @@ const AdminDashboard = ({ user, onLogout }) => {
             <div className="px-6 flex-1 space-y-1 overflow-y-auto custom-scrollbar pt-4">
                 <SidebarLink icon={<BuildingIcon className="w-5 h-5" />} label="Dashboard" active={activeView === 'admin'} onClick={() => setActiveView('admin')} />
                 <SidebarLink icon={<UserIcon className="w-5 h-5" />} label="Employees" active={activeView === 'employees'} onClick={() => setActiveView('employees')} />
-                <SidebarLink icon={<FolderIcon className="w-5 h-5" />} label="Reports" active={activeView === 'reports'} onClick={() => setActiveView('reports')} />
+                <SidebarLink icon={<FileTextIcon className="w-5 h-5" />} label="Project Reports" active={activeView === 'project-reports'} onClick={() => setActiveView('project-reports')} />
+                <SidebarLink icon={<LayersIcon className="w-5 h-5" />} label="Tickets" active={activeView === 'tickets'} onClick={() => setActiveView('tickets')} />
                 <SidebarLink icon={<SettingsIcon className="w-5 h-5" />} label="System Settings" />
             </div>
             <div className="p-6">
@@ -145,7 +150,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                 <main className="p-10 max-w-7xl mx-auto w-full space-y-8">
                     {/* Header Card */}
                     <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-200 flex items-center gap-8">
-                        <div className="w-24 h-24 rounded-2xl bg-slate-100 overflow-hidden shrink-0"><img src={selectedEmployee.profile?.profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedEmployee.username}`} alt="avatar" className="w-full h-full object-cover" /></div>
+                        <div className="w-24 h-24 rounded-full bg-slate-100 overflow-hidden shrink-0 border-4 border-slate-50 shadow-sm"><img src={selectedEmployee.profile?.profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedEmployee.username}`} alt="avatar" className="w-full h-full object-cover" /></div>
                         <div>
                             <h1 className="text-3xl font-black text-slate-900 mb-2">{selectedEmployee.first_name} {selectedEmployee.last_name}</h1>
                             <div className="flex items-center gap-4 text-sm font-bold text-slate-500">
@@ -275,139 +280,6 @@ const AdminDashboard = ({ user, onLogout }) => {
             </div>
         );
     }
-
-
-
-    const renderReports = () => (
-        <div className="space-y-8 animate-fade-in">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h2 className="text-3xl font-black text-slate-900 mb-2">System Reports</h2>
-                    <p className="text-slate-500">Generate and export detailed insights about workforce and projects.</p>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-8">
-                {/* Attendance Reports */}
-                <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 flex flex-col">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-indigo-50 text-indigo-500 flex items-center justify-center"><ClockIcon className="w-6 h-6" /></div>
-                        <div>
-                            <h3 className="text-xl font-bold text-slate-900">Attendance Reports</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Workforce Presence Analytics</p>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-2 mb-8 bg-slate-50 p-1.5 rounded-xl">
-                        {['Daily', 'Weekly', 'Monthly', 'Custom'].map(range => (
-                            <button key={range} className="flex-1 py-2 rounded-lg text-xs font-bold text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-sm transition-all focus:bg-white focus:text-cyan-600 focus:shadow-md">
-                                {range}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="space-y-4 mb-8 flex-1">
-                        <div className="flex justify-between items-center p-4 border border-slate-100 rounded-xl">
-                            <span className="text-sm font-bold text-slate-600">Average Check-in Time</span>
-                            <span className="text-sm font-black text-slate-900">09:14 AM</span>
-                        </div>
-                        <div className="flex justify-between items-center p-4 border border-slate-100 rounded-xl">
-                            <span className="text-sm font-bold text-slate-600">On-Time Percentage</span>
-                            <span className="text-sm font-black text-emerald-500">92%</span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Export Data As</label>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-red-500 hover:text-red-500 hover:bg-red-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> PDF
-                            </button>
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-emerald-500 hover:text-emerald-500 hover:bg-emerald-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> Excel
-                            </button>
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> CSV
-                            </button>
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-indigo-500 hover:text-indigo-500 hover:bg-indigo-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> DOCX
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                {/* Project Status Reports */}
-                <div className="bg-white rounded-[32px] p-8 shadow-sm border border-slate-100 flex flex-col">
-                    <div className="flex items-center gap-4 mb-8">
-                        <div className="w-12 h-12 rounded-2xl bg-amber-50 text-amber-500 flex items-center justify-center"><FolderIcon className="w-6 h-6" /></div>
-                        <div>
-                            <h3 className="text-xl font-bold text-slate-900">Project Status</h3>
-                            <p className="text-xs font-bold text-slate-400 uppercase tracking-widest">Work Updates & Progress</p>
-                        </div>
-                    </div>
-
-                    <div className="flex gap-2 mb-8 bg-slate-50 p-1.5 rounded-xl">
-                        {['Daily', 'Weekly', 'Monthly', 'Custom'].map(range => (
-                            <button key={range} className="flex-1 py-2 rounded-lg text-xs font-bold text-slate-500 hover:bg-white hover:text-slate-900 hover:shadow-sm transition-all focus:bg-white focus:text-cyan-600 focus:shadow-md">
-                                {range}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="space-y-4 mb-8 flex-1 overflow-y-auto custom-scrollbar pr-2 max-h-80">
-                        <div className="grid grid-cols-2 gap-4 mb-4">
-                            <div className="p-4 border border-slate-100 rounded-xl">
-                                <span className="block text-xs font-bold text-slate-400 uppercase">Total</span>
-                                <span className="text-xl font-black text-slate-900">{allWorkUpdates.length}</span>
-                            </div>
-                            <div className="p-4 border border-slate-100 rounded-xl">
-                                <span className="block text-xs font-bold text-slate-400 uppercase">Pending</span>
-                                <span className="text-xl font-black text-amber-500">{allWorkUpdates.filter(u => u.status !== 'Completed').length}</span>
-                            </div>
-                        </div>
-
-                        <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-2">Recent Updates</h4>
-                        {allWorkUpdates.length === 0 ? <p className="text-sm text-slate-400 italic">No updates found.</p> : (
-                            <div className="space-y-3">
-                                {allWorkUpdates.map(update => (
-                                    <div key={update.id} className="p-3 bg-slate-50 rounded-xl border border-slate-100">
-                                        <div className="flex justify-between items-start mb-1">
-                                            <span className="font-bold text-sm text-slate-900 line-clamp-1">{update.project_name}</span>
-                                            <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded ${update.status === 'Completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-amber-100 text-amber-700'}`}>{update.status}</span>
-                                        </div>
-                                        <p className="text-xs text-slate-600 line-clamp-2 mb-1">{update.description}</p>
-                                        <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold">
-                                            <span>{update.date}</span>
-                                            <span>User #{update.user}</span>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        )}
-                    </div>
-
-                    <div>
-                        <label className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3 block">Export Data As</label>
-                        <div className="grid grid-cols-2 gap-3">
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-red-500 hover:text-red-500 hover:bg-red-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> PDF
-                            </button>
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-emerald-500 hover:text-emerald-500 hover:bg-emerald-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> Excel
-                            </button>
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-blue-500 hover:text-blue-500 hover:bg-blue-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> CSV
-                            </button>
-                            <button className="flex items-center justify-center gap-2 py-3 border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:border-indigo-500 hover:text-indigo-500 hover:bg-indigo-50 transition-all">
-                                <FileTextIcon className="w-4 h-4" /> DOCX
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
-
     return (
         <div className="min-h-screen flex bg-white font-['Inter']">
             {renderSidebar()}
@@ -424,69 +296,71 @@ const AdminDashboard = ({ user, onLogout }) => {
                         </div>
                     </div>
                     <div className="flex items-center gap-8">
-                        <div className="w-10 h-10 rounded-xl bg-slate-100 overflow-hidden"><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'admin'}`} alt="avatar" /></div>
+                        <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-200"><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username || 'admin'}`} alt="avatar" className="w-full h-full object-cover" /></div>
                     </div>
                 </header>
 
                 <main className="p-10 flex-1 overflow-y-auto custom-scrollbar relative">
-                    {activeView === 'reports' ? renderReports() : (
-                        <>
-                            <div className="flex items-end justify-between mb-10">
-                                <div>
-                                    <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">User Management</h1>
-                                    <p className="text-slate-500 max-w-xl leading-relaxed">Control access, monitor attendance patterns, and manage permissions for all InfiniteTech personnel globally.</p>
-                                </div>
-                                <button onClick={() => setShowAddUserModal(true)} className="flex items-center gap-2.5 px-6 py-3.5 bg-[#0097a7] hover:bg-[#00838f] text-white rounded-xl font-bold transition-all shadow-lg shadow-cyan-500/20"><UserPlusIcon className="w-5 h-5" /> Add New User</button>
-                            </div>
-                            <div className="grid grid-cols-4 gap-6 mb-10">
-                                <StatCard icon={<UsersGroupIcon className="text-cyan-500" />} label="TOTAL FORCE" value={employees.length} trend="+12%" />
-                                <StatCard icon={<MapPinIcon className="text-cyan-500" />} label="CURRENTLY ON-SITE" value={employees.filter(e => e.profile?.status === 'On-Site').length} badge="Live" />
-                                <StatCard icon={<ShieldCheckIcon className="text-cyan-500" />} label="ADMINS" value={employees.filter(e => e.role === 'ADMIN').length} badge="Internal" />
-                                <StatCard icon={<FileTextIcon className="text-red-500" />} label="PENDING ACCESS" value="7" badge="Critical" badgeColor="text-red-500" />
-                            </div>
-                            <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden mb-10">
-                                <div className="flex items-center justify-between px-8 py-6 border-b border-slate-50">
-                                    <div className="flex gap-10">
-                                        {['All Employees', 'AI Research', 'Cloud Infra', 'Operations'].map(tab => (
-                                            <button key={tab} onClick={() => setAdminSubTab(tab)} className={`relative py-2 text-sm font-bold transition-all ${adminSubTab === tab ? 'text-cyan-600' : 'text-slate-400 hover:text-slate-600'}`}>
-                                                {tab} {tab === 'All Employees' && <span className="ml-1 text-[10px] opacity-40">{employees.length}</span>}
-                                                {adminSubTab === tab && <div className="absolute -bottom-[25px] left-0 right-0 h-1 bg-[#00bcd4] rounded-full" />}
-                                            </button>
-                                        ))}
+                    {activeView === 'reports' ? <Reports allWorkUpdates={allWorkUpdates} /> :
+                        activeView === 'project-reports' ? <ProjectReport allWorkUpdates={allWorkUpdates} /> :
+                            activeView === 'tickets' ? <TicketConsole /> : (
+                                <>
+                                    <div className="flex items-end justify-between mb-10">
+                                        <div>
+                                            <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">User Management</h1>
+                                            <p className="text-slate-500 max-w-xl leading-relaxed">Control access, monitor attendance patterns, and manage permissions for all InfiniteTech personnel globally.</p>
+                                        </div>
+                                        <button onClick={() => setShowAddUserModal(true)} className="flex items-center gap-2.5 px-6 py-3.5 bg-[#0097a7] hover:bg-[#00838f] text-white rounded-xl font-bold transition-all shadow-lg shadow-cyan-500/20"><UserPlusIcon className="w-5 h-5" /> Add New User</button>
                                     </div>
-                                    <div className="flex gap-3">
-                                        <button className="flex items-center gap-2 px-4 py-2 border border-slate-100 rounded-xl text-[13px] font-bold text-slate-500 hover:bg-slate-50 transition-all"><FilterIcon className="w-4 h-4" /> Filter</button>
-                                        <button className="flex items-center gap-2 px-4 py-2 border border-slate-100 rounded-xl text-[13px] font-bold text-slate-500 hover:bg-slate-50 transition-all"><ExportIcon className="w-4 h-4" /> Export</button>
+                                    <div className="grid grid-cols-4 gap-6 mb-10">
+                                        <StatCard icon={<UsersGroupIcon className="text-cyan-500" />} label="TOTAL FORCE" value={employees.length} trend="+12%" />
+                                        <StatCard icon={<MapPinIcon className="text-cyan-500" />} label="CURRENTLY ON-SITE" value={employees.filter(e => e.profile?.status === 'On-Site').length} badge="Live" />
+                                        <StatCard icon={<ShieldCheckIcon className="text-cyan-500" />} label="ADMINS" value={employees.filter(e => e.role === 'ADMIN').length} badge="Internal" />
+                                        <StatCard icon={<FileTextIcon className="text-red-500" />} label="PENDING ACCESS" value="7" badge="Critical" badgeColor="text-red-500" />
                                     </div>
-                                </div>
-                                <table className="w-full">
-                                    <thead className="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
-                                        <tr><th className="px-8 py-4">ID</th><th className="px-8 py-4">USER</th><th className="px-8 py-4">EMAIL ADDRESS</th><th className="px-8 py-4 text-center">ROLE & DEPT</th><th className="px-8 py-4">STATUS</th><th className="px-8 py-4 text-right">ACTIONS</th></tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-slate-50">
-                                        {loading ? (
-                                            <tr><td colSpan="6" className="text-center py-10 font-bold text-slate-400">Loading directory...</td></tr>
-                                        ) : employees.map((emp) => (
-                                            <EmployeeRow
-                                                key={emp.id}
-                                                id={emp.employee_id || `#IT-${emp.id}`}
-                                                name={`${emp.first_name} ${emp.last_name}`}
-                                                status={emp.profile?.status || 'Offline'}
-                                                email={emp.email}
-                                                role={emp.role}
-                                                dept={emp.profile?.department || 'Unassigned'}
-                                                active={emp.profile?.is_active_employee}
-                                                onClick={() => setSelectedEmployee(emp)}
-                                            />
-                                        ))}
-                                        {!loading && employees.length === 0 && (
-                                            <tr><td colSpan="6" className="text-center py-10 font-bold text-slate-400">No employees found.</td></tr>
-                                        )}
-                                    </tbody>
-                                </table>
-                            </div>
-                        </>
-                    )}
+                                    <div className="bg-white rounded-[32px] border border-slate-100 shadow-sm overflow-hidden mb-10">
+                                        <div className="flex items-center justify-between px-8 py-6 border-b border-slate-50">
+                                            <div className="flex gap-10">
+                                                {['All Employees', 'AI Research', 'Cloud Infra', 'Operations'].map(tab => (
+                                                    <button key={tab} onClick={() => setAdminSubTab(tab)} className={`relative py-2 text-sm font-bold transition-all ${adminSubTab === tab ? 'text-cyan-600' : 'text-slate-400 hover:text-slate-600'}`}>
+                                                        {tab} {tab === 'All Employees' && <span className="ml-1 text-[10px] opacity-40">{employees.length}</span>}
+                                                        {adminSubTab === tab && <div className="absolute -bottom-[25px] left-0 right-0 h-1 bg-[#00bcd4] rounded-full" />}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                            <div className="flex gap-3">
+                                                <button className="flex items-center gap-2 px-4 py-2 border border-slate-100 rounded-xl text-[13px] font-bold text-slate-500 hover:bg-slate-50 transition-all"><FilterIcon className="w-4 h-4" /> Filter</button>
+                                                <button className="flex items-center gap-2 px-4 py-2 border border-slate-100 rounded-xl text-[13px] font-bold text-slate-500 hover:bg-slate-50 transition-all"><ExportIcon className="w-4 h-4" /> Export</button>
+                                            </div>
+                                        </div>
+                                        <table className="w-full">
+                                            <thead className="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
+                                                <tr><th className="px-8 py-4">ID</th><th className="px-8 py-4">USER</th><th className="px-8 py-4">EMAIL ADDRESS</th><th className="px-8 py-4 text-center">ROLE & DEPT</th><th className="px-8 py-4">STATUS</th><th className="px-8 py-4 text-right">ACTIONS</th></tr>
+                                            </thead>
+                                            <tbody className="divide-y divide-slate-50">
+                                                {loading ? (
+                                                    <tr><td colSpan="6" className="text-center py-10 font-bold text-slate-400">Loading directory...</td></tr>
+                                                ) : employees.map((emp) => (
+                                                    <EmployeeRow
+                                                        key={emp.id}
+                                                        id={emp.employee_id || `#IT-${emp.id}`}
+                                                        name={`${emp.first_name} ${emp.last_name}`}
+                                                        status={emp.profile?.status || 'Offline'}
+                                                        email={emp.email}
+                                                        role={emp.role}
+                                                        dept={emp.profile?.department || 'Unassigned'}
+                                                        active={emp.profile?.is_active_employee}
+                                                        onClick={() => setSelectedEmployee(emp)}
+                                                    />
+                                                ))}
+                                                {!loading && employees.length === 0 && (
+                                                    <tr><td colSpan="6" className="text-center py-10 font-bold text-slate-400">No employees found.</td></tr>
+                                                )}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </>
+                            )}
 
                     {/* Add User Modal */}
                     {showAddUserModal && (
@@ -539,7 +413,7 @@ const StatCard = ({ icon, label, value, trend, badge, badgeColor }) => (
 const EmployeeRow = ({ id, name, status, email, role, dept, active, onClick }) => (
     <tr onClick={onClick} className="group hover:bg-slate-50/50 transition-all cursor-pointer">
         <td className="px-8 py-5 text-sm font-bold text-slate-400">{id}</td>
-        <td className="px-8 py-5"><div className="flex items-center gap-4"><div className="w-10 h-10 rounded-xl overflow-hidden border border-slate-100"><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`} alt="avatar" /></div><div><p className="text-sm font-bold text-slate-900 leading-none mb-1.5">{name}</p><div className="flex items-center gap-1.5"><div className={`w-1.5 h-1.5 rounded-full ${status === 'On-Site' ? 'bg-emerald-500' : status === 'Remote' ? 'bg-cyan-400' : 'bg-slate-300'}`} /><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{status}</span></div></div></div></td>
+        <td className="px-8 py-5"><div className="flex items-center gap-4"><div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 shadow-sm"><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`} alt="avatar" className="w-full h-full object-cover" /></div><div><p className="text-sm font-bold text-slate-900 leading-none mb-1.5">{name}</p><div className="flex items-center gap-1.5"><div className={`w-1.5 h-1.5 rounded-full ${status === 'On-Site' ? 'bg-emerald-500' : status === 'Remote' ? 'bg-cyan-400' : 'bg-slate-300'}`} /><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{status}</span></div></div></div></td>
         <td className="px-8 py-5 text-sm font-medium text-slate-500">{email}</td>
         <td className="px-8 py-5 text-center"><span className={`text-[9px] font-black px-2 py-0.5 rounded-md border mb-1 block ${role === 'ADMIN' ? 'bg-cyan-50 border-cyan-100 text-cyan-600' : 'bg-slate-50 border-slate-100 text-slate-500'}`}>{role}</span><span className="text-[11px] font-bold text-slate-400">{dept}</span></td>
         <td className="px-8 py-5"><div className="flex items-center gap-2"><div className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500' : 'bg-slate-300'}`} /><span className={`text-sm font-bold ${active ? 'text-slate-900' : 'text-slate-400'}`}>{active ? 'Active' : 'Deactivated'}</span></div></td>
@@ -548,3 +422,5 @@ const EmployeeRow = ({ id, name, status, email, role, dept, active, onClick }) =
 );
 
 export default AdminDashboard;
+
+

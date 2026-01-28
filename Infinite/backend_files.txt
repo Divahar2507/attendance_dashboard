@@ -1,0 +1,15 @@
+ Volume in drive F is New Volume
+ Volume Serial Number is 747E-CF42
+
+ Directory of f:\Infinite\backend
+
+26-01-2026  17:01    <DIR>          .
+26-01-2026  17:14    <DIR>          ..
+26-01-2026  15:36               141 .env
+26-01-2026  16:08    <DIR>          node_modules
+26-01-2026  16:08            49,080 package-lock.json
+26-01-2026  16:08               478 package.json
+26-01-2026  16:56             1,673 schema.sql
+26-01-2026  15:20    <DIR>          uploads
+               4 File(s)         51,372 bytes
+               4 Dir(s)  25,345,290,240 bytes free

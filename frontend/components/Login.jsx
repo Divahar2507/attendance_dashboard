@@ -4,8 +4,8 @@ import { api } from '../services/api';
 
 const Login = ({ onLogin }) => {
     const [loginType, setLoginType] = useState('admin'); // 'admin' or 'employee'
-    const [username, setUsername] = useState('admin');
-    const [password, setPassword] = useState('admin123');
+    const [username, setUsername] = useState('');
+    const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
 
@@ -13,8 +13,8 @@ const Login = ({ onLogin }) => {
         setLoginType(type);
         setError('');
         if (type === 'admin') {
-            setUsername('admin');
-            setPassword('admin123');
+            setUsername('');
+            setPassword('');
         } else {
             // Default demo employee if needed, or clear fields
             setUsername('');
@@ -30,6 +30,7 @@ const Login = ({ onLogin }) => {
             const data = await api.login(username, password);
             if (data.token) {
                 localStorage.setItem('token', data.token);
+                localStorage.setItem('tms_auth', JSON.stringify({ user: data.user, token: data.token }));
             }
             // Basic role check on frontend to ensure they are logging into the right portal
             // (Optional, but good for UX if they try to login as employee on admin tab)

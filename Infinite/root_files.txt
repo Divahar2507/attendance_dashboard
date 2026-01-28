@@ -1,0 +1,13 @@
+ Volume in drive F is New Volume
+ Volume Serial Number is 747E-CF42
+
+ Directory of f:\Infinite
+
+26-01-2026  17:14    <DIR>          .
+26-01-2026  17:01    <DIR>          backend
+26-01-2026  17:14               577 backend_files.txt
+26-01-2026  17:13               754 filelist.txt
+26-01-2026  15:24    <DIR>          frontent
+26-01-2026  17:14                 0 root_files.txt
+               3 File(s)          1,331 bytes
+               3 Dir(s)  25,345,290,240 bytes free

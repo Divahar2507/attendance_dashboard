@@ -1,0 +1,7 @@
+{
+  "name": "Infinite TMS - Ticket Management System",
+  "description": "A robust full-stack enterprise ticket management system with role-based access, AI-powered summaries, and detailed work tracking.",
+  "requestFramePermissions": [
+    "camera"
+  ]
+}

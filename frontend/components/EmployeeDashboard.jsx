@@ -15,10 +15,12 @@ import {
     TrashIcon,
     DownloadIcon,
     PlusIcon,
-    FileTextIcon
+    FileTextIcon,
+    LayersIcon
 } from './Icons';
 import { gemini } from '../services/geminiService';
 import { api } from '../services/api';
+import TicketDashboard from './tickets/UserDashboard.tsx';
 
 const EmployeeDashboard = ({ user, onLogout }) => {
     const [activeView, setActiveView] = useState('profile');
@@ -214,6 +216,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                 <SidebarLink icon={<ClockIcon className="w-5 h-5" />} label="Attendance" active={activeView === 'attendance'} onClick={() => setActiveView('attendance')} />
                 <SidebarLink icon={<FileTextIcon className="w-5 h-5" />} label="Documents" active={activeView === 'documents'} onClick={() => setActiveView('documents')} />
                 <SidebarLink icon={<FileTextIcon className="w-5 h-5" />} label="Work Updates" active={activeView === 'work'} onClick={() => setActiveView('work')} />
+                <SidebarLink icon={<LayersIcon className="w-5 h-5" />} label="Tickets" active={activeView === 'tickets'} onClick={() => setActiveView('tickets')} />
                 <SidebarLink icon={<BrainIcon className="w-5 h-5" />} label="AI Assistant" onClick={() => setIsChatOpen(true)} />
                 <SidebarLink icon={<SettingsIcon className="w-5 h-5" />} label="Settings" />
             </div>
@@ -568,7 +571,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                     <div className="font-bold text-slate-900">Welcome back, {user?.first_name}!</div>
                     <div className="flex items-center gap-6">
                         <button className="p-2 text-indigo-600 bg-indigo-50 rounded-xl transition-colors relative"><BellIcon /><div className="absolute top-1 right-1 w-2 h-2 bg-indigo-600 rounded-full border-2 border-indigo-50" /></button>
-                        <div className="w-10 h-10 rounded-xl bg-slate-100 overflow-hidden"><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username}`} alt="avatar" /></div>
+                        <div className="w-10 h-10 rounded-full bg-slate-100 overflow-hidden border border-slate-200"><img src={user?.profile?.profile_picture || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.username}`} alt="avatar" className="w-full h-full object-cover" /></div>
                     </div>
                 </header>
 
@@ -582,8 +585,9 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                             </h1>
                             <p className="text-slate-500 text-lg">
                                 {activeView === 'profile' && "Manage your professional identity and workspace preferences."}
-                                {activeView === 'attendance' && "Track your work hours and location verification."}
-                                {activeView === 'documents' && "Securely store and access your employment files."}
+                                {activeView === 'attendance' && "track your work hours and location verification."}
+                                {activeView === 'documents' && "securely store and access your employment files."}
+                                {activeView === 'tickets' && "Manage and progress through your assigned deliverables."}
                             </p>
                         </div>
                     </div>
@@ -592,6 +596,7 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                     {activeView === 'attendance' && renderAttendance()}
                     {activeView === 'documents' && renderDocuments()}
                     {activeView === 'work' && renderWorkUpdates()}
+                    {activeView === 'tickets' && <TicketDashboard user={user} />}
                 </main>
             </div>
 
