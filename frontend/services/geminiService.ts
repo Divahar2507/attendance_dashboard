@@ -44,12 +44,25 @@ class GeminiService {
     }
 
     try {
-      // Handle various SDK versions
+      // Check for OLD SDK (google-generative-ai)
       if (typeof this.ai.getGenerativeModel === 'function') {
         const model = this.ai.getGenerativeModel({ model: "gemini-1.5-flash" });
-        return model.startChat ? model.startChat() : model;
-      } else if (this.ai.chats) {
-        return this.ai.chats.create({ model: 'gemini-1.5-flash' });
+        return model.startChat();
+      }
+      // Check for NEW SDK (@google/genai)
+      else if (this.ai.chats && typeof this.ai.chats.create === 'function') {
+        const chat = this.ai.chats.create({
+          model: 'gemini-1.5-flash',
+          config: {
+            temperature: 0.7,
+            maxOutputTokens: 200,
+          },
+          history: [
+            { role: 'user', parts: [{ text: 'Hello' }] },
+            { role: 'model', parts: [{ text: 'Hello! How can I help you today?' }] }
+          ]
+        });
+        return chat;
       }
     } catch (e) {
       console.error("Chat creation failed", e);
