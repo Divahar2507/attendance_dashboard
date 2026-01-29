@@ -118,7 +118,19 @@ const EmployeeDashboard = ({ user, onLogout }) => {
                 setAttMessage(err.message || "Failed to mark attendance");
             }
         }, (err) => {
-            setAttMessage("Error getting location: " + err.message);
+            // Fallback for HTTP testing (non-secure origin)
+            if (window.location.protocol === 'http:' && window.location.hostname !== 'localhost') {
+                console.warn("Geolocation blocked on insecure origin. Using mock location for testing.");
+                // Mock location (Office location approx)
+                const mockLat = 13.0360406;
+                const mockLng = 80.2181952;
+                api.markAttendance(user.id, mockLat, mockLng).then(res => {
+                    setAttMessage("Attendance marked (Mock Location due to HTTP)");
+                    fetchAttendance();
+                }).catch(e => setAttMessage("Failed to mark mock attendance"));
+            } else {
+                setAttMessage("Error getting location: " + err.message);
+            }
         });
     };
 
