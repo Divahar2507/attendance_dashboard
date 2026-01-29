@@ -130,7 +130,7 @@ class AttendanceView(APIView):
         # Office Coordinates: 37/5, Aryagowda Rd, Chennai - from User provided map link
         OFFICE_LAT = 13.0360406
         OFFICE_LNG = 80.2181952
-        ALLOWED_RADIUS_METERS = 50000 # Increased to 50km for testing purposes
+        ALLOWED_RADIUS_METERS = 200 # Enforce 200m radius
 
         # Haversine Formula
         R = 6371000 # Radius of Earth in meters

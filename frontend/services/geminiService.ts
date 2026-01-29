@@ -14,17 +14,21 @@ class GeminiService {
       // In Vite, use import.meta.env. Using 'as any' to bypass TS check.
       const key = (import.meta as any).env?.VITE_GEMINI_API_KEY;
 
+      console.log("Initializing Gemini... Key present:", !!key);
+
       // Only initialize if we have a real-looking key
       if (key && key !== 'undefined' && key !== 'null' && key.length > 10) {
-        // Try both common initialization styles
         try {
-          this.ai = new GoogleGenAI(key);
-        } catch (e) {
+          // New SDK uses object
           this.ai = new GoogleGenAI({ apiKey: key });
+        } catch (e) {
+          console.error("Gemini init failed:", e);
         }
+      } else {
+        console.warn("Gemini API Key missing or invalid.");
       }
     } catch (e) {
-      console.warn("Gemini AI initialization ignored:", e.message);
+      console.warn("Gemini AI initialization ignored:", e);
     }
   }
 
