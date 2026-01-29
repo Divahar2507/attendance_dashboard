@@ -86,4 +86,17 @@ class Command(BaseCommand):
                      status=random.choice(['In Progress', 'Completed'])
                  )
 
+            # C. Tickets (Assigned to Employee)
+            self.stdout.write(f'  - Generating tickets for {user.username}...')
+            for k in range(3):
+                Ticket.objects.create(
+                    title=f"Fix issue in {random.choice(projects)}",
+                    description="Investigate and resolve the reported bug.",
+                    status='Open',
+                    assignee=user,
+                    created_by=admin_user, # Admin creates tickets usually
+                    month=today.strftime('%B'),
+                    year=today.year
+                )
+
         self.stdout.write(self.style.SUCCESS('Successfully populated data for all employees!'))
