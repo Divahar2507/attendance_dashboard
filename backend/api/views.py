@@ -188,6 +188,7 @@ class AttendanceView(APIView):
              return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
 
         history = Attendance.objects.filter(user_id=user_id).order_by('-date')
+        serializer = AttendanceSerializer(history, many=True)
         return Response(serializer.data)
 
 from .models import Ticket, TicketUpdate
@@ -195,7 +196,7 @@ from .serializers import TicketSerializer, TicketUpdateSerializer
 
 class TicketViewSet(viewsets.ModelViewSet):
     serializer_class = TicketSerializer
-    permissions_classes = [permissions.IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
     
     def get_queryset(self):
         # Admin sees all, Employee sees pool (unassigned) or their own?

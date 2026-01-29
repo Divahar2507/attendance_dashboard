@@ -112,8 +112,18 @@ if database_url:
 
 
 
-CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', "http://localhost:3000").split(',')
+CORS_ALLOWED_ORIGINS = os.environ.get('CORS_ALLOWED_ORIGINS', "http://localhost:3000,http://localhost:5173").split(',')
 CORS_ALLOW_ALL_ORIGINS = True # For easier initial deployment, can be tightened later
+
+# CSRF settings for production
+CSRF_TRUSTED_ORIGINS = [
+    "http://3.108.218.4:5173",
+    "http://3.108.218.4",
+    "http://localhost:3000",
+    "http://localhost:5173",
+]
+CSRF_COOKIE_SECURE = False # Set to True if using HTTPS
+CSRF_COOKIE_HTTPONLY = False # Needed for some frontend setups
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

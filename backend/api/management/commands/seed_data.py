@@ -28,32 +28,7 @@ class Command(BaseCommand):
         departments = ['AI Research', 'Cloud Infra', 'Operations', 'Engineering', 'HR']
         can_roles = ['Software Engineer', 'Data Scientist', 'HR Manager', 'DevOps Engineer', 'Product Manager']
         
-        self.stdout.write('Seeding 20 employees...')
-        
-        for _ in range(20):
-            first_name = fake.first_name()
-            last_name = fake.last_name()
-            username = f"{first_name.lower()}.{last_name.lower()}"
-            if User.objects.filter(username=username).exists():
-                continue
-                
-            user = User.objects.create_user(
-                username=username,
-                email=f"{username}@infinitetech.com",
-                password='password123',
-                first_name=first_name,
-                last_name=last_name,
-                role=User.IS_EMPLOYEE,
-                employee_id=f"IT-{random.randint(100, 999)}"
-            )
-            
-            EmployeeProfile.objects.create(
-                user=user,
-                department=random.choice(departments),
-                designation=random.choice(can_roles),
-                phone_number=fake.phone_number(),
-                location=fake.city(),
-                status=random.choice(['On-Site', 'Remote', 'On-Leave'])
-            )
+        # Employee seeding removed as per request
+        self.stdout.write(self.style.SUCCESS('Skipping employee seeding, only Admin user ensured.'))
             
         self.stdout.write(self.style.SUCCESS('Successfully seeded database!'))
