@@ -36,6 +36,35 @@ export const api = {
         return await res.json();
     },
 
+    async updateEmployee(id, data) {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${this.baseUrl}/employees/${id}/`, {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Token ${token}`
+            },
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) {
+            const err = await res.json();
+            throw new Error(JSON.stringify(err));
+        }
+        return await res.json();
+    },
+
+    async deleteEmployee(id) {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`${this.baseUrl}/employees/${id}/`, {
+            method: 'DELETE',
+            headers: {
+                'Authorization': `Token ${token}`
+            }
+        });
+        if (!res.ok) throw new Error('Failed to delete employee');
+        return true;
+    },
+
     async updateProfile(data) {
         const token = localStorage.getItem('token');
         const isFormData = data instanceof FormData;

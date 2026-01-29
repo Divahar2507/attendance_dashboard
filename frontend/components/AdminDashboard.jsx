@@ -69,6 +69,8 @@ const AdminDashboard = ({ user, onLogout }) => {
     }, [activeView]);
 
 
+    const [isEditingUser, setIsEditingUser] = useState(false);
+
     const handleInputChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
@@ -78,19 +80,58 @@ const AdminDashboard = ({ user, onLogout }) => {
         setNewUserLoading(true);
         setNewUserError('');
         try {
-            await api.createEmployee(formData);
+            if (isEditingUser && formData.id) {
+                await api.updateEmployee(formData.id, formData);
+                alert('User updated successfully');
+            } else {
+                await api.createEmployee(formData);
+                alert('User created successfully');
+            }
             setShowAddUserModal(false);
             fetchEmployees(); // Refresh list
+            if (selectedEmployee && isEditingUser) {
+                setSelectedEmployee(null); // Go back to list or refresh details
+            }
             // Reset form
             setFormData({
                 username: '', email: '', password: '',
                 first_name: '', last_name: '', employee_id: '',
                 phone_number: '', date_of_birth: ''
             });
+            setIsEditingUser(false);
         } catch (err) {
-            setNewUserError('Failed to create user. Check inputs.');
+            setNewUserError('Failed to save user. Check inputs.');
         } finally {
             setNewUserLoading(false);
+        }
+    };
+
+    const handleEditUser = (employee) => {
+        setFormData({
+            id: employee.id,
+            username: employee.username,
+            email: employee.email,
+            first_name: employee.first_name,
+            last_name: employee.last_name,
+            employee_id: employee.employee_id,
+            phone_number: employee.profile?.phone_number || '',
+            date_of_birth: employee.profile?.date_of_birth || '',
+            password: '' // Don't populate password
+        });
+        setIsEditingUser(true);
+        setShowAddUserModal(true);
+    };
+
+    const handleDeleteUser = async (id) => {
+        if (window.confirm('Are you sure you want to delete this user? This action cannot be undone.')) {
+            try {
+                await api.deleteEmployee(id);
+                alert('User deleted successfully');
+                setSelectedEmployee(null);
+                fetchEmployees();
+            } catch (err) {
+                alert('Failed to delete user');
+            }
         }
     };
 
@@ -145,6 +186,10 @@ const AdminDashboard = ({ user, onLogout }) => {
                     <div className="flex items-center gap-4">
                         <button onClick={() => setSelectedEmployee(null)} className="p-2 -ml-2 hover:bg-slate-100 rounded-full transition-all text-slate-500 hover:text-slate-900">← Back</button>
                         <h1 className="text-xl font-bold text-slate-900">Employee Details</h1>
+                    </div>
+                    <div className="flex items-center gap-3">
+                        <button onClick={() => handleEditUser(selectedEmployee)} className="px-4 py-2 bg-slate-100 text-slate-700 rounded-lg text-sm font-bold hover:bg-slate-200 transition-all">Edit User</button>
+                        <button onClick={() => handleDeleteUser(selectedEmployee.id)} className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-bold hover:bg-red-100 transition-all">Delete User</button>
                     </div>
                 </header>
                 <main className="p-10 max-w-7xl mx-auto w-full space-y-8">
