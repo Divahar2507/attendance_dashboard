@@ -1,13 +1,11 @@
 from django.core.management.base import BaseCommand
 from api.models import User, EmployeeProfile
-from faker import Faker
-import random
 
 class Command(BaseCommand):
     help = 'Seeds the database with real-world employee data'
 
     def handle(self, *args, **options):
-        fake = Faker()
+        # Admin creation logic starts here
         
         # Create Admin
         # Create or Update Admin to ensure correct role
