@@ -44,6 +44,22 @@ class EmployeeProfile(models.Model):
     skills = models.TextField(null=True, blank=True)
     interests = models.TextField(null=True, blank=True)
     hobbies = models.TextField(null=True, blank=True)
+    
+    GENDER_CHOICES = [
+        ('Male', 'Male'),
+        ('Female', 'Female'),
+        ('Other', 'Other'),
+    ]
+    gender = models.CharField(max_length=10, choices=GENDER_CHOICES, null=True, blank=True)
+    
+    EMPLOYEE_TYPE_CHOICES = [
+        ('Full-Time', 'Full-Time'),
+        ('Part-Time', 'Part-Time'),
+        ('Contract', 'Contract'),
+        ('Intern', 'Intern'),
+    ]
+    employee_type = models.CharField(max_length=20, choices=EMPLOYEE_TYPE_CHOICES, default='Full-Time')
+    
     profile_picture = models.ImageField(upload_to='profile_pics/', null=True, blank=True)
 
     def __str__(self):

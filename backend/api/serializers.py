@@ -14,7 +14,8 @@ class EmployeeProfileSerializer(serializers.ModelSerializer):
             'school_name', 'school_year', 'school_percentage',
             'college_name', 'college_year', 'college_cgpa',
             'address_line1', 'city', 'state', 'zip_code',
-            'skills', 'interests', 'hobbies', 'profile_picture'
+            'skills', 'interests', 'hobbies', 'profile_picture',
+            'gender', 'employee_type'
         ]
 
 class EmployeeDocumentSerializer(serializers.ModelSerializer):
@@ -56,6 +57,8 @@ class CreateEmployeeSerializer(serializers.Serializer):
     phone_number = serializers.CharField()
     location = serializers.CharField(required=False, allow_blank=True)
     date_of_birth = serializers.DateField(required=False, allow_null=True)
+    gender = serializers.CharField(required=False, allow_blank=True)
+    employee_type = serializers.CharField(required=False, allow_blank=True)
 
 class TicketUpdateSerializer(serializers.ModelSerializer):
     user_name = serializers.CharField(source='user.username', read_only=True)

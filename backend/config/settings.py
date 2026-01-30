@@ -121,8 +121,16 @@ CSRF_TRUSTED_ORIGINS = [
     "http://3.108.218.4",
     "http://localhost:3000",
     "http://localhost:5173",
+    "https://infinite-attendance.vercel.app",
+    "https://infinite-attendance.vercel.app:5173",
+    "https://infinite-attendance.vercel.app:3000",
+    "https://infinite-attendance.vercel.app:5173",
+    "https://infinite-attendance.vercel.app:3000",
+    "http://3.108.218.4:8000",
+    "http://3.108.218.4:8000",
+    "http://3.108.218.4:8000",
 ]
-CSRF_COOKIE_SECURE = False # Set to True if using HTTPS
+CSRF_COOKIE_SECURE = False # Set to True if using HTTPS 
 CSRF_COOKIE_HTTPONLY = False # Needed for some frontend setups
 
 # Password validation

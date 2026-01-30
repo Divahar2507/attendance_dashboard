@@ -51,7 +51,8 @@ const AdminDashboard = ({ user, onLogout }) => {
     const [formData, setFormData] = useState({
         username: '', email: '', password: '',
         first_name: '', last_name: '', employee_id: '',
-        phone_number: '', date_of_birth: ''
+        phone_number: '', date_of_birth: '',
+        gender: '', employee_type: 'Full-Time'
     });
 
     const [allWorkUpdates, setAllWorkUpdates] = useState([]);
@@ -96,7 +97,8 @@ const AdminDashboard = ({ user, onLogout }) => {
             setFormData({
                 username: '', email: '', password: '',
                 first_name: '', last_name: '', employee_id: '',
-                phone_number: '', date_of_birth: ''
+                phone_number: '', date_of_birth: '',
+                gender: '', employee_type: 'Full-Time'
             });
             setIsEditingUser(false);
         } catch (err) {
@@ -116,6 +118,8 @@ const AdminDashboard = ({ user, onLogout }) => {
             employee_id: employee.employee_id,
             phone_number: employee.profile?.phone_number || '',
             date_of_birth: employee.profile?.date_of_birth || '',
+            gender: employee.profile?.gender || '',
+            employee_type: employee.profile?.employee_type || 'Full-Time',
             password: '' // Don't populate password
         });
         setIsEditingUser(true);
@@ -424,6 +428,26 @@ const AdminDashboard = ({ user, onLogout }) => {
                                     <div className="grid grid-cols-2 gap-4">
                                         <input name="phone_number" placeholder="Phone Number" onChange={handleInputChange} value={formData.phone_number} className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold" required />
                                         <input name="employee_id" placeholder="Employee ID (e.g. IT-001)" onChange={handleInputChange} value={formData.employee_id} className="bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold" required />
+                                    </div>
+                                    <div className="grid grid-cols-2 gap-4">
+                                        <div>
+                                            <label className="text-[10px] uppercase font-bold text-slate-400 pl-2 mb-1 block">Gender</label>
+                                            <select name="gender" onChange={handleInputChange} value={formData.gender} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 outline-none">
+                                                <option value="">Select Gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
+                                            </select>
+                                        </div>
+                                        <div>
+                                            <label className="text-[10px] uppercase font-bold text-slate-400 pl-2 mb-1 block">Employee Type</label>
+                                            <select name="employee_type" onChange={handleInputChange} value={formData.employee_type} className="w-full bg-slate-50 border border-slate-100 rounded-xl px-4 py-3 text-sm font-bold text-slate-700 outline-none">
+                                                <option value="Full-Time">Full-Time</option>
+                                                <option value="Part-Time">Part-Time</option>
+                                                <option value="Contract">Contract</option>
+                                                <option value="Intern">Intern</option>
+                                            </select>
+                                        </div>
                                     </div>
                                     <div>
                                         <label className="text-[10px] uppercase font-bold text-slate-400 pl-2 mb-1 block">Date of Birth</label>

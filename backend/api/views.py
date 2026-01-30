@@ -52,7 +52,9 @@ class EmployeeViewSet(viewsets.ModelViewSet):
                 designation=data.get('designation', 'Trainee'),
                 phone_number=data['phone_number'],
                 location=data.get('location', 'Head Office'),
-                date_of_birth=data.get('date_of_birth')
+                date_of_birth=data.get('date_of_birth'),
+                gender=data.get('gender'),
+                employee_type=data.get('employee_type', 'Full-Time')
             )
             return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
