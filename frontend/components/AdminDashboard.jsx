@@ -384,7 +384,7 @@ const AdminDashboard = ({ user, onLogout }) => {
                                         </div>
                                         <table className="w-full">
                                             <thead className="bg-slate-50/50 text-[10px] font-black text-slate-400 uppercase tracking-widest text-left">
-                                                <tr><th className="px-8 py-4">ID</th><th className="px-8 py-4">USER</th><th className="px-8 py-4">EMAIL ADDRESS</th><th className="px-8 py-4 text-center">ROLE & DEPT</th><th className="px-8 py-4">STATUS</th><th className="px-8 py-4 text-right">ACTIONS</th></tr>
+                                                <tr><th className="px-8 py-4">USER</th><th className="px-8 py-4">EMAIL ADDRESS</th><th className="px-8 py-4 text-center">ROLE & DEPT</th><th className="px-8 py-4">STATUS</th><th className="px-8 py-4 text-right">ACTIONS</th><th className="px-8 py-4">ID</th></tr>
                                             </thead>
                                             <tbody className="divide-y divide-slate-50">
                                                 {loading ? (
@@ -481,12 +481,12 @@ const StatCard = ({ icon, label, value, trend, badge, badgeColor }) => (
 
 const EmployeeRow = ({ id, name, status, email, role, dept, active, onClick }) => (
     <tr onClick={onClick} className="group hover:bg-slate-50/50 transition-all cursor-pointer">
-        <td className="px-8 py-5 text-sm font-bold text-slate-400">{id}</td>
         <td className="px-8 py-5"><div className="flex items-center gap-4"><div className="w-10 h-10 rounded-full overflow-hidden border border-slate-200 shadow-sm"><img src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`} alt="avatar" className="w-full h-full object-cover" /></div><div><p className="text-sm font-bold text-slate-900 leading-none mb-1.5">{name}</p><div className="flex items-center gap-1.5"><div className={`w-1.5 h-1.5 rounded-full ${status === 'On-Site' ? 'bg-emerald-500' : status === 'Remote' ? 'bg-cyan-400' : 'bg-slate-300'}`} /><span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">{status}</span></div></div></div></td>
         <td className="px-8 py-5 text-sm font-medium text-slate-500">{email}</td>
         <td className="px-8 py-5 text-center"><span className={`text-[9px] font-black px-2 py-0.5 rounded-md border mb-1 block ${role === 'ADMIN' ? 'bg-cyan-50 border-cyan-100 text-cyan-600' : 'bg-slate-50 border-slate-100 text-slate-500'}`}>{role}</span><span className="text-[11px] font-bold text-slate-400">{dept}</span></td>
         <td className="px-8 py-5"><div className="flex items-center gap-2"><div className={`w-2 h-2 rounded-full ${active ? 'bg-emerald-500' : 'bg-slate-300'}`} /><span className={`text-sm font-bold ${active ? 'text-slate-900' : 'text-slate-400'}`}>{active ? 'Active' : 'Deactivated'}</span></div></td>
         <td className="px-8 py-5 text-right"><MoreHorizontalIcon className="text-slate-300 group-hover:text-slate-900 transition-colors inline-block" /></td>
+        <td className="px-8 py-5 text-sm font-bold text-slate-400">{id}</td>
     </tr>
 );
 
